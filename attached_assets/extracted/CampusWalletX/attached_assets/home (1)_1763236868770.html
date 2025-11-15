@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Campus Wallet{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>🎓 Smart Campus Wallet</h1>
+    <p class="subtitle">Track spending, discover events, and manage your campus life</p>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h2>👤 User Profiles</h2>
+        <p>View student information, spending habits, and personalized recommendations</p>
+        <a href="/users" class="btn btn-primary">Browse Users</a>
+    </div>
+
+    <div class="feature-card">
+        <h2>📅 Campus Events</h2>
+        <p>Discover upcoming events matched to your interests and schedule</p>
+        <a href="/events" class="btn btn-primary">View Events</a>
+    </div>
+
+    <div class="feature-card">
+        <h2>📊 Analytics</h2>
+        <p>Explore spending patterns, popular merchants, and financial insights</p>
+        <a href="/analytics" class="btn btn-primary">See Analytics</a>
+    </div>
+</div>
+
+<div class="info-section">
+    <h2>How It Works</h2>
+    <div class="info-grid">
+        <div class="info-item">
+            <span class="icon">💳</span>
+            <h3>Track Transactions</h3>
+            <p>Monitor all campus wallet transactions across dining, books, and more</p>
+        </div>
+        <div class="info-item">
+            <span class="icon">🎯</span>
+            <h3>Smart Recommendations</h3>
+            <p>Get event suggestions based on your interests and preferences</p>
+        </div>
+        <div class="info-item">
+            <span class="icon">📈</span>
+            <h3>Financial Insights</h3>
+            <p>Understand spending patterns and make informed decisions</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

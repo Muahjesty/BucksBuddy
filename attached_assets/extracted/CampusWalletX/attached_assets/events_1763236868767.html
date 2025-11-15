@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Campus Events{% endblock %}
+
+{% block content %}
+<h1>📅 Campus Events</h1>
+
+<div class="filter-section">
+    <form method="get" class="filter-form">
+        <label for="category">Filter by Category:</label>
+        <select name="category" id="category" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    {% if selected_category %}
+    <a href="/events" class="btn btn-small">Clear Filter</a>
+    {% endif %}
+</div>
+
+<p class="subtitle">Showing {{ events|length }} events</p>
+
+<div class="events-grid">
+    {% for event in events %}
+    <div class="event-card">
+        <div class="event-header">
+            <h3>{{ event.name }}</h3>
+            <span class="event-category">{{ event.category }}</span>
+        </div>
+        <div class="event-details">
+            <p><strong>📍 Location:</strong> {{ event.location }}</p>
+            <p><strong>🕐 Time:</strong> {{ event.start_time }}</p>
+            <p><strong>💰 Cost:</strong> ${{ "%.2f"|format(event.cost) }}</p>
+            <p><strong>🏷️ Tags:</strong> 
+                {% for tag in event.tags.split(',') %}
+                <span class="tag">{{ tag.strip() }}</span>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

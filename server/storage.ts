@@ -14,7 +14,7 @@ import {
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
-import { eq, desc, gte } from "drizzle-orm";
+import { eq, desc, gte, and, lte, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User methods - Required for Replit Auth
@@ -88,9 +88,61 @@ export class DbStorage implements IStorage {
 
   // Budget methods
   async getBudgets(userId: string): Promise<Budget[]> {
-    return await db.select()
+    const userBudgets = await db.select()
       .from(budgets)
       .where(eq(budgets.userId, userId));
+    
+    // Calculate spent amount for each budget based on transactions
+    const budgetsWithSpent = await Promise.all(
+      userBudgets.map(async (budget: Budget) => {
+        const spent = await this.calculateBudgetSpent(userId, budget.category, budget.period);
+        return {
+          ...budget,
+          spent,
+        };
+      })
+    );
+    
+    return budgetsWithSpent;
+  }
+  
+  private async calculateBudgetSpent(
+    userId: string,
+    category: string,
+    period: string
+  ): Promise<number> {
+    const now = new Date();
+    let startDate: Date;
+    let endDate: Date = now; // Upper bound is current time
+    
+    if (period === "Weekly") {
+      // Get start of current week (Sunday)
+      const dayOfWeek = now.getDay();
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - dayOfWeek);
+      startDate.setHours(0, 0, 0, 0);
+    } else {
+      // Monthly - get start of current month
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      startDate.setHours(0, 0, 0, 0);
+    }
+    
+    // Sum transactions in this category within the period (startDate <= date <= now)
+    const result = await db
+      .select({
+        total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)`,
+      })
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.userId, userId),
+          eq(transactions.category, category),
+          gte(transactions.date, startDate),
+          lte(transactions.date, endDate)
+        )
+      );
+    
+    return Number(result[0]?.total || 0);
   }
 
   async getBudget(id: string): Promise<Budget | undefined> {

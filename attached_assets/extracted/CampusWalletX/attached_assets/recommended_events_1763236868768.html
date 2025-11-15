@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Events for {{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📅 Recommended Events for {{ user.name }}</h1>
+    <a href="/users/{{ user.user_id }}" class="btn btn-secondary">← Back to Profile</a>
+</div>
+
+<div class="user-interests">
+    <h3>Your Interests:</h3>
+    {% for interest in user.interests.split(',') %}
+    <span class="tag tag-large">{{ interest.strip() }}</span>
+    {% endfor %}
+</div>
+
+{% if matched_events %}
+<section class="events-section">
+    <h2>✨ Matched to Your Interests</h2>
+    <div class="events-grid">
+        {% for event in matched_events %}
+        <div class="event-card matched">
+            <div class="event-header">
+                <h3>{{ event.name }}</h3>
+                <span class="event-category">{{ event.category }}</span>
+            </div>
+            <div class="event-details">
+                <p><strong>📍 Location:</strong> {{ event.location }}</p>
+                <p><strong>🕐 Time:</strong> {{ event.start_time }}</p>
+                <p><strong>💰 Cost:</strong> ${{ "%.2f"|format(event.cost) }}</p>
+                <p><strong>🏷️ Tags:</strong> 
+                    {% for tag in event.tags.split(',') %}
+                    <span class="tag {% if tag.strip().lower() in event.matched_interests %}tag-highlight{% endif %}">
+                        {{ tag.strip() }}
+                    </span>
+                    {% endfor %}
+                </p>
+            </div>
+            <div class="match-reason">
+                <small>Matches: {{ event.matched_interests|join(', ') }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<div class="empty-state">
+    <p>No events found matching your interests.</p>
+</div>
+{% endif %}
+
+{% if other_events %}
+<section class="events-section">
+    <h2>Other Campus Events</h2>
+    <div class="events-grid">
+        {% for event in other_events %}
+        <div class="event-card">
+            <div class="event-header">
+                <h3>{{ event.name }}</h3>
+                <span class="event-category">{{ event.category }}</span>
+            </div>
+            <div class="event-details">
+                <p><strong>📍 Location:</strong> {{ event.location }}</p>
+                <p><strong>🕐 Time:</strong> {{ event.start_time }}</p>
+                <p><strong>💰 Cost:</strong> ${{ "%.2f"|format(event.cost) }}</p>
+                <p><strong>🏷️ Tags:</strong> 
+                    {% for tag in event.tags.split(',') %}
+                    <span class="tag">{{ tag.strip() }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

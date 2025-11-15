@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Users - Campus Wallet{% endblock %}
+
+{% block content %}
+<h1>👥 Campus Users</h1>
+<p class="subtitle">Browse all registered students</p>
+
+<div class="users-grid">
+    {% for user in users %}
+    <div class="user-card">
+        <div class="user-header">
+            <h3>{{ user.name }}</h3>
+            <span class="user-id">{{ user.user_id }}</span>
+        </div>
+        <div class="user-details">
+            <p><strong>Major:</strong> {{ user.major }}</p>
+            <p><strong>Class:</strong> {{ user.class_year }}</p>
+            <p><strong>Residence:</strong> {{ user.residence_type }}</p>
+            <p><strong>Interests:</strong> 
+                {% for interest in user.interests.split(',') %}
+                <span class="tag">{{ interest.strip() }}</span>
+                {% endfor %}
+            </p>
+        </div>
+        <div class="user-actions">
+            <a href="/users/{{ user.user_id }}" class="btn btn-small">View Profile</a>
+            <a href="/users/{{ user.user_id }}/transactions" class="btn btn-small btn-secondary">Transactions</a>
+            <a href="/users/{{ user.user_id }}/events" class="btn btn-small btn-accent">Events</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

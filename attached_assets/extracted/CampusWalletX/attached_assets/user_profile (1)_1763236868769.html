@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }} - Campus Wallet{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <h1>{{ user.name }}</h1>
+    <p class="user-id">{{ user.user_id }}</p>
+</div>
+
+<div class="profile-grid">
+    <div class="profile-info">
+        <h2>Profile Information</h2>
+        <table class="info-table">
+            <tr>
+                <th>Major</th>
+                <td>{{ user.major }}</td>
+            </tr>
+            <tr>
+                <th>Class Year</th>
+                <td>{{ user.class_year }}</td>
+            </tr>
+            <tr>
+                <th>Residence</th>
+                <td>{{ user.residence_type }}</td>
+            </tr>
+            <tr>
+                <th>Interests</th>
+                <td>
+                    {% for interest in user.interests.split(',') %}
+                    <span class="tag">{{ interest.strip() }}</span>
+                    {% endfor %}
+                </td>
+            </tr>
+        </table>
+
+        <div class="profile-actions">
+            <a href="/users/{{ user.user_id }}/transactions" class="btn btn-primary">View Transactions</a>
+            <a href="/users/{{ user.user_id }}/events" class="btn btn-accent">Recommended Events</a>
+        </div>
+    </div>
+
+    <div class="profile-stats">
+        <h2>Spending Summary</h2>
+        <div class="stat-card">
+            <div class="stat-value">${{ "%.2f"|format(summary.total_spent or 0) }}</div>
+            <div class="stat-label">Total Spent</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ summary.transaction_count or 0 }}</div>
+            <div class="stat-label">Transactions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">${{ "%.2f"|format(summary.avg_transaction or 0) }}</div>
+            <div class="stat-label">Avg Transaction</div>
+        </div>
+
+        <h3>Spending by Category</h3>
+        <div class="category-list">
+            {% for cat in categories %}
+            <div class="category-item">
+                <span class="category-name">{{ cat.category }}</span>
+                <span class="category-amount">${{ "%.2f"|format(cat.total) }}</span>
+                <span class="category-count">({{ cat.count }} transactions)</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
