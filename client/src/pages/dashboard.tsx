@@ -69,20 +69,110 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
     limit: parseFloat(b.limit),
   }));
 
-  const insights = [
-    {
-      id: "1",
-      type: "savings" as const,
-      title: "Save $45 this month",
-      description: "You spent 15% more on dining this week. Consider using your meal plan for breakfast.",
-    },
-    {
-      id: "2",
-      type: "recommendation" as const,
-      title: "Campus events this weekend",
-      description: "Based on your interests, we found 3 free tech events that match your profile.",
-    },
-  ];
+  // Generate AI insights based on actual spending and budget data
+  const generateInsights = () => {
+    const insights: Array<{
+      id: string;
+      type: "savings" | "spending" | "recommendation";
+      title: string;
+      description: string;
+    }> = [];
+
+    // Calculate total spending
+    const totalSpent = spendingData.reduce((sum, cat) => sum + cat.amount, 0);
+
+    // Analyze each budget
+    formattedBudgets.forEach((budget, index) => {
+      const percentUsed = (budget.spent / budget.limit) * 100;
+      const remaining = budget.limit - budget.spent;
+
+      // Budget warning if over 80% used
+      if (percentUsed >= 80 && percentUsed < 100) {
+        insights.push({
+          id: `budget-warning-${index}`,
+          type: "spending",
+          title: `${budget.category} budget at ${Math.round(percentUsed)}%`,
+          description: `You've used $${budget.spent.toFixed(2)} of your $${budget.limit.toFixed(2)} ${budget.period} budget. $${remaining.toFixed(2)} remaining.`,
+        });
+      }
+
+      // Budget exceeded alert
+      if (percentUsed >= 100) {
+        const overspent = budget.spent - budget.limit;
+        insights.push({
+          id: `budget-exceeded-${index}`,
+          type: "spending",
+          title: `${budget.category} budget exceeded`,
+          description: `You're $${overspent.toFixed(2)} over your ${budget.period} ${budget.category} budget of $${budget.limit.toFixed(2)}.`,
+        });
+      }
+    });
+
+    // Analyze spending by category
+    const topCategory = spendingData.reduce((prev, current) => 
+      (current.amount > prev.amount) ? current : prev, 
+      { category: '', amount: 0 }
+    );
+
+    if (topCategory.amount > 0 && totalSpent > 0) {
+      const percentage = ((topCategory.amount / totalSpent) * 100).toFixed(0);
+      insights.push({
+        id: "top-spending",
+        type: "spending",
+        title: `${topCategory.category} is your top expense`,
+        description: `${percentage}% of your spending ($${topCategory.amount.toFixed(2)}) goes to ${topCategory.category}. Consider reviewing your ${topCategory.category.toLowerCase()} habits.`,
+      });
+    }
+
+    // Meal plan recommendation based on balances
+    const mealPlanBalance = balances.find(b => b.title === "Meal Plan")?.balance || 0;
+    const diningDollarsBalance = balances.find(b => b.title === "Dining Dollars")?.balance || 0;
+    const diningSpending = spendingData.find(d => d.category === "Dining")?.amount || 0;
+
+    if (diningSpending > 50 && mealPlanBalance > 0) {
+      insights.push({
+        id: "meal-plan-savings",
+        type: "savings",
+        title: "Use your meal plan to save money",
+        description: `You spent $${diningSpending.toFixed(2)} on dining. With $${mealPlanBalance.toFixed(2)} in your meal plan, you could save by using it for more meals.`,
+      });
+    }
+
+    // Campus card balance recommendation
+    const campusCardBalance = balances.find(b => b.title === "Campus Card")?.balance || 0;
+    if (campusCardBalance < 100 && campusCardBalance > 0) {
+      insights.push({
+        id: "campus-card-low",
+        type: "recommendation",
+        title: "Campus Card balance running low",
+        description: `Your Campus Card has $${campusCardBalance.toFixed(2)} remaining. Consider adding funds to avoid running out.`,
+      });
+    }
+
+    // If no insights generated, show positive message
+    if (insights.length === 0 && formattedBudgets.length > 0) {
+      insights.push({
+        id: "on-track",
+        type: "recommendation",
+        title: "You're staying within budget!",
+        description: "Great job! All your spending is within your budgets. Keep up the good work managing your finances.",
+      });
+    }
+
+    // Default message if no data
+    if (insights.length === 0) {
+      insights.push({
+        id: "get-started",
+        type: "recommendation",
+        title: "Start tracking your spending",
+        description: "Add transactions and set budgets to receive personalized insights about your financial habits.",
+      });
+    }
+
+    return insights.slice(0, 3); // Limit to top 3 insights
+  };
+
+  const insights = generateInsights();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
