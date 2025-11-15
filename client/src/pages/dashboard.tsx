@@ -41,7 +41,11 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
     "Supplies": "hsl(0, 0%, 45%)",
   };
 
-  const spendingData = transactions.reduce((acc, transaction) => {
+  // Filter transactions to exclude future-dated ones (only include up to current date)
+  const now = new Date();
+  const currentTransactions = transactions.filter(t => new Date(t.date) <= now);
+
+  const spendingData = currentTransactions.reduce((acc, transaction) => {
     const category = transaction.category;
     const amount = parseFloat(transaction.amount);
     const existing = acc.find(item => item.category === category);

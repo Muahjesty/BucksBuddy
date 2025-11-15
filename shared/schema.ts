@@ -69,7 +69,9 @@ export const campusEvents = pgTable("campus_events", {
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
-export const insertTransactionSchema = createInsertSchema(transactions).omit({ id: true });
+export const insertTransactionSchema = createInsertSchema(transactions).omit({ id: true }).extend({
+  date: z.union([z.date(), z.string().transform((str) => new Date(str))]).optional(),
+});
 export const insertBudgetSchema = createInsertSchema(budgets).omit({ id: true });
 export const insertRewardSchema = createInsertSchema(rewards).omit({ id: true });
 export const insertCampusEventSchema = createInsertSchema(campusEvents).omit({ id: true }).extend({
