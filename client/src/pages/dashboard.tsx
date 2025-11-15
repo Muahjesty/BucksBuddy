@@ -6,75 +6,63 @@ import { RewardsCard } from "@/components/rewards-card";
 import { AIInsights } from "@/components/ai-insights";
 import { QuickActions } from "@/components/quick-actions";
 import { Utensils, Coffee, CreditCard } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import type { Transaction, Budget } from "@shared/schema";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
-  //todo: remove mock functionality - replace with real data from backend
+  const { data: transactions = [], isLoading: transactionsLoading } = useQuery<Transaction[]>({
+    queryKey: ["/api/transactions"],
+  });
+
+  const { data: budgets = [], isLoading: budgetsLoading } = useQuery<Budget[]>({
+    queryKey: ["/api/budgets"],
+  });
+
   const balances = [
     { title: "Meal Plan", balance: 287.50, icon: Utensils, subtitle: "12 meals remaining" },
     { title: "Dining Dollars", balance: 156.75, icon: Coffee, subtitle: "Expires May 2026" },
     { title: "Campus Card", balance: 423.20, icon: CreditCard, subtitle: "Available balance" },
   ];
 
-  const spendingData = [
-    { category: "Dining", amount: 245.30, color: "hsl(217, 91%, 35%)" },
-    { category: "Books", amount: 128.50, color: "hsl(142, 76%, 30%)" },
-    { category: "Transport", amount: 67.80, color: "hsl(271, 91%, 35%)" },
-    { category: "Entertainment", amount: 89.40, color: "hsl(34, 92%, 45%)" },
-  ];
+  const categoryColors: Record<string, string> = {
+    "Dining": "hsl(217, 91%, 35%)",
+    "Books": "hsl(142, 76%, 30%)",
+    "Transport": "hsl(271, 91%, 35%)",
+    "Entertainment": "hsl(34, 92%, 45%)",
+    "Supplies": "hsl(0, 0%, 45%)",
+  };
 
-  const transactions = [
-    {
-      id: "T0001",
-      merchant: "Starbucks",
-      category: "Dining",
-      amount: 5.75,
-      paymentMethod: "Dining Dollars",
-      location: "Campus Center",
-      date: new Date("2025-11-14"),
-    },
-    {
-      id: "T0002",
-      merchant: "Campus Dining Hall",
-      category: "Dining",
-      amount: 9.25,
-      paymentMethod: "Meal Plan",
-      location: "Dining Hall",
-      date: new Date("2025-11-13"),
-    },
-    {
-      id: "T0003",
-      merchant: "Bookstore",
-      category: "Books",
-      amount: 42.50,
-      paymentMethod: "Campus Card",
-      location: "Bookstore",
-      date: new Date("2025-11-12"),
-    },
-    {
-      id: "T0004",
-      merchant: "Target",
-      category: "Supplies",
-      amount: 28.99,
-      paymentMethod: "Credit Card",
-      location: "Downtown Newark",
-      date: new Date("2025-11-11"),
-    },
-    {
-      id: "T0005",
-      merchant: "Local Pizzeria",
-      category: "Dining",
-      amount: 14.25,
-      paymentMethod: "Campus Card",
-      location: "Downtown Newark",
-      date: new Date("2025-11-10"),
-    },
-  ];
+  const spendingData = transactions.reduce((acc, transaction) => {
+    const category = transaction.category;
+    const amount = parseFloat(transaction.amount);
+    const existing = acc.find(item => item.category === category);
+    
+    if (existing) {
+      existing.amount += amount;
+    } else {
+      acc.push({
+        category,
+        amount,
+        color: categoryColors[category] || "hsl(0, 0%, 45%)",
+      });
+    }
+    
+    return acc;
+  }, [] as Array<{ category: string; amount: number; color: string }>);
 
-  const budgets = [
-    { id: "B001", category: "Dining", spent: 245.30, limit: 300, period: "Monthly" },
-    { id: "B002", category: "Entertainment", spent: 89.40, limit: 100, period: "Monthly" },
-    { id: "B003", category: "Transport", spent: 67.80, limit: 150, period: "Monthly" },
-  ];
+  const formattedTransactions = transactions.slice(0, 5).map(t => ({
+    ...t,
+    amount: parseFloat(t.amount),
+    date: new Date(t.date),
+  }));
+
+  const formattedBudgets = budgets.map(b => ({
+    ...b,
+    spent: parseFloat(b.spent),
+    limit: parseFloat(b.limit),
+  }));
 
   const insights = [
     {
@@ -113,8 +101,44 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <TransactionList transactions={transactions} />
-          <BudgetProgress budgets={budgets} />
+          {transactionsLoading ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Transactions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : (
+            <TransactionList transactions={formattedTransactions} />
+          )}
+          
+          {budgetsLoading ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Budget Progress</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-2 w-full" />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : (
+            <BudgetProgress budgets={formattedBudgets} />
+          )}
         </div>
 
         <RewardsCard points={1250} streak={7} achievements={["Budget Master", "Early Bird", "Event Goer"]} />
