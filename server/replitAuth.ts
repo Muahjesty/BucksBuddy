@@ -147,10 +147,11 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
 
   try {
     const config = await getOidcConfig();
-    const tokenResponse = await client.refreshTokenGrant(config, refreshToken);
-    updateUserSession(user, tokenResponse);
+    const tokens = await client.refreshTokenGrant(config, refreshToken);
+    updateUserSession(user, tokens);
     return next();
   } catch (error) {
+    console.error("Token refresh error:", error);
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
