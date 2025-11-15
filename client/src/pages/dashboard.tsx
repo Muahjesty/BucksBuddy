@@ -11,12 +11,14 @@ import type { Transaction, Budget } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChatWidgetRef } from "@/components/chat-widget";
+import { useLocation } from "wouter";
 
 interface DashboardProps {
   chatWidgetRef?: React.RefObject<ChatWidgetRef>;
 }
 
 export default function Dashboard({ chatWidgetRef }: DashboardProps) {
+  const [, setLocation] = useLocation();
   const { data: transactions = [], isLoading: transactionsLoading } = useQuery<Transaction[]>({
     queryKey: ["/api/transactions"],
   });
@@ -93,6 +95,17 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
           type: "spending",
           title: `${budget.category} budget at ${Math.round(percentUsed)}%`,
           description: `You've used $${budget.spent.toFixed(2)} of your $${budget.limit.toFixed(2)} ${budget.period} budget. $${remaining.toFixed(2)} remaining.`,
+          actions: [
+            {
+              label: "View Budget",
+              onClick: () => setLocation("/budgets"),
+              variant: "default"
+            },
+            {
+              label: "See Transactions",
+              onClick: () => setLocation("/transactions")
+            }
+          ]
         });
       }
 
@@ -104,6 +117,17 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
           type: "spending",
           title: `${budget.category} budget exceeded`,
           description: `You're $${overspent.toFixed(2)} over your ${budget.period} ${budget.category} budget of $${budget.limit.toFixed(2)}.`,
+          actions: [
+            {
+              label: "Adjust Budget",
+              onClick: () => setLocation("/budgets"),
+              variant: "default"
+            },
+            {
+              label: "Review Spending",
+              onClick: () => setLocation("/transactions")
+            }
+          ]
         });
       }
     });
@@ -121,6 +145,13 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
         type: "spending",
         title: `${topCategory.category} is your top expense`,
         description: `${percentage}% of your spending ($${topCategory.amount.toFixed(2)}) goes to ${topCategory.category}. Consider reviewing your ${topCategory.category.toLowerCase()} habits.`,
+        actions: [
+          {
+            label: "View Breakdown",
+            onClick: () => setLocation("/transactions"),
+            variant: "default"
+          }
+        ]
       });
     }
 
@@ -135,6 +166,13 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
         type: "savings",
         title: "Use your meal plan to save money",
         description: `You spent $${diningSpending.toFixed(2)} on dining. With $${mealPlanBalance.toFixed(2)} in your meal plan, you could save by using it for more meals.`,
+        actions: [
+          {
+            label: "View Dining Spending",
+            onClick: () => setLocation("/transactions"),
+            variant: "default"
+          }
+        ]
       });
     }
 
@@ -146,6 +184,13 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
         type: "recommendation",
         title: "Campus Card balance running low",
         description: `Your Campus Card has $${campusCardBalance.toFixed(2)} remaining. Consider adding funds to avoid running out.`,
+        actions: [
+          {
+            label: "View Balance",
+            onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+            variant: "default"
+          }
+        ]
       });
     }
 
@@ -156,6 +201,13 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
         type: "recommendation",
         title: "You're staying within budget!",
         description: "Great job! All your spending is within your budgets. Keep up the good work managing your finances.",
+        actions: [
+          {
+            label: "View Budgets",
+            onClick: () => setLocation("/budgets"),
+            variant: "default"
+          }
+        ]
       });
     }
 
@@ -166,6 +218,17 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
         type: "recommendation",
         title: "Start tracking your spending",
         description: "Add transactions and set budgets to receive personalized insights about your financial habits.",
+        actions: [
+          {
+            label: "Add Transaction",
+            onClick: () => setLocation("/transactions"),
+            variant: "default"
+          },
+          {
+            label: "Set Budget",
+            onClick: () => setLocation("/budgets")
+          }
+        ]
       });
     }
 

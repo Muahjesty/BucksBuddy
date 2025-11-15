@@ -3,11 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, TrendingDown, Calendar, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+interface InsightAction {
+  label: string;
+  onClick: () => void;
+  variant?: "default" | "outline" | "ghost";
+}
+
 interface Insight {
   id: string;
   type: "savings" | "spending" | "recommendation";
   title: string;
   description: string;
+  actions?: InsightAction[];
 }
 
 interface AIInsightsProps {
@@ -51,15 +58,29 @@ export function AIInsights({ insights, onLearnMore }: AIInsightsProps) {
                 <div className="flex-1 space-y-2">
                   <p className="font-semibold text-sm">{insight.title}</p>
                   <p className="text-sm text-muted-foreground">{insight.description}</p>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-8 text-xs" 
-                    data-testid={`button-insight-${insight.id}`}
-                    onClick={() => onLearnMore?.(insight)}
-                  >
-                    Learn More
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    {insight.actions?.map((action, idx) => (
+                      <Button
+                        key={idx}
+                        variant={action.variant || "outline"}
+                        size="sm"
+                        className="h-8 text-xs"
+                        onClick={action.onClick}
+                        data-testid={`button-action-${insight.id}-${idx}`}
+                      >
+                        {action.label}
+                      </Button>
+                    ))}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 text-xs" 
+                      data-testid={`button-insight-${insight.id}`}
+                      onClick={() => onLearnMore?.(insight)}
+                    >
+                      Learn More
+                    </Button>
+                  </div>
                 </div>
               </div>
             );
