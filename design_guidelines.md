@@ -2,15 +2,31 @@
 
 ## Design Approach
 
-**Selected Approach:** Modern Fintech-Inspired Design System
+**Selected Approach:** Rutgers-Branded Modern Fintech Design System
 
-Drawing inspiration from consumer fintech leaders (Venmo, Cash App, Mint) while following Material Design principles for data-rich financial applications. The design prioritizes clarity, trust, and quick comprehension of financial information—essential for student users managing campus finances.
+Drawing inspiration from consumer fintech leaders (Venmo, Cash App, Mint) while incorporating Rutgers University's signature scarlet red (#CC0033) and following Material Design principles for data-rich financial applications. The design prioritizes clarity, trust, and quick comprehension of financial information—essential for student users managing campus finances.
 
 **Key Design Principles:**
 - **Financial Clarity:** All monetary values, balances, and budgets must be immediately scannable
 - **Data Hierarchy:** Most important information (current balances, recent transactions) front and center
 - **Trust & Stability:** Clean, professional aesthetic that conveys security and reliability
 - **Student-Friendly:** Approachable, modern interface without being overly playful
+- **Rutgers Pride:** Strategic use of scarlet red for branding and key actions while maintaining readability
+
+## Color Philosophy
+
+**Rutgers Scarlet Integration:**
+The signature Rutgers scarlet red (#CC0033 / HSL: 345° 100% 40%) is used strategically:
+- Primary actions and interactive elements
+- Key branding touchpoints (logo, primary buttons)
+- Data visualizations and charts
+- Accent elements that need attention
+
+**Supporting Palette:**
+- Warm neutrals that complement scarlet without competing
+- Sophisticated grays for content hierarchy
+- Balanced accent colors for charts and data visualization
+- High contrast ratios for accessibility in both light/dark modes
 
 ---
 
