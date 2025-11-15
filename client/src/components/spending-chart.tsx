@@ -32,7 +32,8 @@ export function SpendingChart({ data }: SpendingChartProps) {
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="amount"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                nameKey="category"
+                label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
