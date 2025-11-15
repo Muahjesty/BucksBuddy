@@ -2,7 +2,28 @@
 
 ## Overview
 
-Smart Campus Wallet is a comprehensive financial management platform designed for college students at Rutgers University-Newark. The application helps students track campus-related spending, manage multiple payment methods (meal plans, dining dollars, campus cards), set budgets, earn rewards, and gain AI-powered insights into their financial habits. Built for the HackFest 2025 hackathon, the application provides a modern, fintech-inspired interface with Rutgers branding that makes financial management approachable and engaging for students.
+Smart Campus Wallet is a comprehensive financial management platform designed for college students at Rutgers University-Newark. The application helps students track campus-related spending, manage multiple payment methods (meal plans, dining dollars, campus cards), set budgets, earn rewards, and gain AI-powered insights into their financial habits. Built for the HackFest 2025 hackathon, the application provides a modern, fintech-inspired interface with Rutgers branding and a stunning liquid glass/glassmorphism design theme that makes financial management approachable and engaging for students.
+
+## Recent Changes (November 15, 2025)
+
+**Authentication Implementation:**
+- Integrated Replit Auth (OpenID Connect) supporting email/password, Google, GitHub, X, and Apple logins
+- Added PostgreSQL-backed session management for persistent authentication
+- Implemented automatic token refresh flow with proper session persistence
+- Created Landing page for logged-out users showcasing app features
+- All API routes now protected with authentication middleware
+
+**Database Schema Updates:**
+- Migrated users table from username/password to OIDC-based fields (email, firstName, lastName, profileImageUrl)
+- Added sessions table for persistent session storage
+- Implemented user upsert flow from OIDC claims to database
+
+**Glassmorphism Design Theme:**
+- Added liquid glass CSS variables supporting light and dark modes
+- Created utility classes: `.glass`, `.glass-accent`, `.glass-card`
+- Applied glass effects to sidebar (backdrop blur, translucent background)
+- Applied glass-accent gradient to header with Rutgers scarlet tones
+- Applied glass-card effect to balance cards for subtle depth
 
 ## User Preferences
 
@@ -25,11 +46,19 @@ Preferred communication style: Simple, everyday language.
 - **Recharts** - Composable charting library for data visualizations (spending breakdowns, budget progress)
 
 **Design System:**
-- Rutgers scarlet red (#CC0033 / HSL: 345° 100% 40%) as primary brand color
-- Custom theme system supporting light/dark modes
+- **Liquid Glass/Glassmorphism Theme** - Translucent surfaces with backdrop blur effects
+- Rutgers scarlet red (#CC0033 / HSL: 345° 100% 40%) as primary brand color with glass accent gradients
+- Custom theme system supporting light/dark modes with adaptive glass variables
 - Typography using Inter font family for readability of financial data
 - Monospace fonts (Roboto Mono) for monetary values to ensure alignment
-- Material Design-inspired elevation and shadow system
+- **Glass CSS Variables:**
+  - `--glass-bg` - Translucent white (light) / black (dark) with 0.7/0.4 alpha
+  - `--glass-border` - Subtle border for glass surfaces
+  - `--glass-accent-bg` - Rutgers scarlet with 8-12% opacity
+- **Glass Utility Classes:**
+  - `.glass` - Main glass effect (12px backdrop blur, translucent bg)
+  - `.glass-accent` - Glass with Rutgers scarlet gradient
+  - `.glass-card` - Lighter glass effect for cards (8px backdrop blur)
 
 ### Backend Architecture
 
@@ -37,15 +66,21 @@ Preferred communication style: Simple, everyday language.
 - **Express.js** - RESTful API server with middleware-based architecture
 - **Node.js ESM** - Modern ECMAScript modules for clean imports and better tree-shaking
 
-**Session Management:**
+**Authentication & Session Management:**
+- **Replit Auth (OpenID Connect)** - Secure authentication with multiple login providers (email/password, Google, GitHub, X, Apple)
+- **passport.js** - Express authentication middleware for OIDC integration
+- **openid-client** - Official OpenID Connect client library for token management
 - **connect-pg-simple** - PostgreSQL-backed session store for persistent user sessions
-- Express session middleware for authentication state
+- **Token Refresh Flow** - Automatic token refresh with proper session persistence using req.login()
+- Express session middleware for authentication state with 7-day TTL
 
 **API Design:**
 - RESTful endpoints prefixed with `/api`
+- All endpoints (except auth routes) protected with `isAuthenticated` middleware
 - JSON request/response format
 - Request logging middleware for debugging and monitoring
 - Error handling with structured error responses
+- User context available via `req.user.claims.sub` in protected routes
 
 ### Data Storage
 
@@ -55,12 +90,13 @@ Preferred communication style: Simple, everyday language.
 - **Drizzle-Zod** - Runtime schema validation from database schema
 
 **Schema Design:**
-The application uses four primary tables:
+The application uses five primary tables:
 
-1. **users** - Student profiles with authentication credentials, academic info (major, class year), and preferences
-2. **transactions** - Financial transaction records with merchant, category, amount, payment method, location, and timestamp
-3. **budgets** - User-defined spending limits by category and time period (weekly/monthly) with current spending tracking
-4. **rewards** - Gamification system tracking points, streaks, and achievement badges
+1. **users** - Student profiles with OIDC authentication (id, email, firstName, lastName, profileImageUrl, timestamps)
+2. **sessions** - PostgreSQL-backed session storage for persistent authentication (sid, sess, expire)
+3. **transactions** - Financial transaction records with merchant, category, amount, payment method, location, and timestamp
+4. **budgets** - User-defined spending limits by category and time period (weekly/monthly) with current spending tracking
+5. **campusEvents** - Campus events with title, description, category, location, date, time, price, and registration URL
 
 **Data Access Pattern:**
 - Storage interface abstraction (`IStorage`) allows swapping between in-memory and database implementations
