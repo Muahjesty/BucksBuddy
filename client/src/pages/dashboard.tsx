@@ -78,6 +78,11 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
       type: "savings" | "spending" | "recommendation";
       title: string;
       description: string;
+      actions?: Array<{
+        label: string;
+        onClick: () => void;
+        variant?: "default" | "outline" | "ghost";
+      }>;
     }> = [];
 
     // Calculate total spending
@@ -217,18 +222,7 @@ export default function Dashboard({ chatWidgetRef }: DashboardProps) {
         id: "get-started",
         type: "recommendation",
         title: "Start tracking your spending",
-        description: "Add transactions and set budgets to receive personalized insights about your financial habits.",
-        actions: [
-          {
-            label: "Add Transaction",
-            onClick: () => setLocation("/transactions"),
-            variant: "default"
-          },
-          {
-            label: "Set Budget",
-            onClick: () => setLocation("/budgets")
-          }
-        ]
+        description: "Add transactions and set budgets to receive personalized insights about your financial habits."
       });
     }
 
