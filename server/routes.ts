@@ -104,8 +104,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Campus Events routes
-  app.get("/api/campus-events", async (req, res) => {
+  // Campus Events routes - Protected
+  app.get("/api/campus-events", isAuthenticated, async (req, res) => {
     try {
       const events = await storage.getCampusEvents();
       res.json(events);
@@ -115,7 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/campus-events/upcoming", async (req, res) => {
+  app.get("/api/campus-events/upcoming", isAuthenticated, async (req, res) => {
     try {
       const events = await storage.getUpcomingEvents();
       res.json(events);
@@ -125,7 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/campus-events", async (req, res) => {
+  app.post("/api/campus-events", isAuthenticated, async (req, res) => {
     try {
       const validatedData = insertCampusEventSchema.parse(req.body);
       const event = await storage.createCampusEvent(validatedData);
