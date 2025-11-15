@@ -41,12 +41,12 @@ export function SpendMoneyDialog({ open, onOpenChange }: SpendMoneyDialogProps) 
       const res = await apiRequest("POST", "/api/transactions", data);
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
       queryClient.invalidateQueries({ queryKey: ["/api/budgets"] });
       toast({
         title: "Transaction Successful",
-        description: `$${amount} spent at ${merchant}`,
+        description: `$${parseFloat(variables.amount).toFixed(2)} spent at ${variables.merchant}`,
       });
       setAmount("");
       setMerchant("");
@@ -65,14 +65,18 @@ export function SpendMoneyDialog({ open, onOpenChange }: SpendMoneyDialogProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || parseFloat(amount) <= 0) {
+    
+    const amountValue = parseFloat(amount);
+    
+    if (!amount || isNaN(amountValue) || amountValue <= 0) {
       toast({
         title: "Invalid Amount",
-        description: "Please enter a valid amount",
+        description: "Please enter a valid amount greater than 0",
         variant: "destructive",
       });
       return;
     }
+    
     if (!merchant.trim()) {
       toast({
         title: "Missing Merchant",
@@ -81,10 +85,11 @@ export function SpendMoneyDialog({ open, onOpenChange }: SpendMoneyDialogProps) 
       });
       return;
     }
+    
     spendMutation.mutate({ 
-      merchant,
+      merchant: merchant.trim(),
       category, 
-      amount,
+      amount: amountValue.toFixed(2),
       paymentMethod,
       location: "Campus"
     });
