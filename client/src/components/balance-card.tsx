@@ -10,7 +10,7 @@ interface BalanceCardProps {
 
 export function BalanceCard({ title, balance, icon: Icon, subtitle }: BalanceCardProps) {
   return (
-    <Card data-testid={`card-balance-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+    <Card className="glass-card hover-elevate" data-testid={`card-balance-${title.toLowerCase().replace(/\s+/g, '-')}`}>
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
         <div className="flex-1">
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
