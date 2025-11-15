@@ -36,7 +36,8 @@ export function AddTransactionDialog() {
 
   const createTransaction = useMutation({
     mutationFn: async (data: FormData) => {
-      return await apiRequest("/api/transactions", "POST", {
+      console.log("Creating transaction with data:", data);
+      return await apiRequest("POST", "/api/transactions", {
         ...data,
         amount: data.amount,
       });
@@ -51,10 +52,11 @@ export function AddTransactionDialog() {
       setOpen(false);
       form.reset();
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Transaction creation failed:", error);
       toast({
         title: "Error",
-        description: "Failed to add transaction. Please try again.",
+        description: error?.message || "Failed to add transaction. Please try again.",
         variant: "destructive",
       });
     },
