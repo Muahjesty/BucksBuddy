@@ -42,10 +42,22 @@ export const rewards = pgTable("rewards", {
   achievements: text("achievements").array(),
 });
 
+export const campusEvents = pgTable("campus_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  date: timestamp("date").notNull(),
+  location: text("location").notNull(),
+  description: text("description").notNull(),
+  organizer: text("organizer"),
+  isFree: integer("is_free").notNull().default(1),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertTransactionSchema = createInsertSchema(transactions).omit({ id: true });
 export const insertBudgetSchema = createInsertSchema(budgets).omit({ id: true });
 export const insertRewardSchema = createInsertSchema(rewards).omit({ id: true });
+export const insertCampusEventSchema = createInsertSchema(campusEvents).omit({ id: true });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -55,3 +67,5 @@ export type InsertBudget = z.infer<typeof insertBudgetSchema>;
 export type Budget = typeof budgets.$inferSelect;
 export type InsertReward = z.infer<typeof insertRewardSchema>;
 export type Reward = typeof rewards.$inferSelect;
+export type InsertCampusEvent = z.infer<typeof insertCampusEventSchema>;
+export type CampusEvent = typeof campusEvents.$inferSelect;
