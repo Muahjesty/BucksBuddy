@@ -11,6 +11,7 @@ import Dashboard from "@/pages/dashboard";
 import Transactions from "@/pages/transactions";
 import Budgets from "@/pages/budgets";
 import Rewards from "@/pages/rewards";
+import CampusEvents from "@/pages/campus-events";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/transactions" component={Transactions} />
       <Route path="/budgets" component={Budgets} />
       <Route path="/rewards" component={Rewards} />
+      <Route path="/events" component={CampusEvents} />
       <Route component={NotFound} />
     </Switch>
   );

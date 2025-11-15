@@ -5,13 +5,16 @@ import {
   type InsertTransaction,
   type Budget,
   type InsertBudget,
+  type CampusEvent,
+  type InsertCampusEvent,
   users,
   transactions,
-  budgets
+  budgets,
+  campusEvents
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, gte } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -31,6 +34,12 @@ export interface IStorage {
   createBudget(budget: InsertBudget): Promise<Budget>;
   updateBudget(id: string, budget: Partial<InsertBudget>): Promise<Budget | undefined>;
   deleteBudget(id: string): Promise<void>;
+  
+  // Campus Events methods
+  getCampusEvents(): Promise<CampusEvent[]>;
+  getUpcomingEvents(): Promise<CampusEvent[]>;
+  getCampusEvent(id: string): Promise<CampusEvent | undefined>;
+  createCampusEvent(event: InsertCampusEvent): Promise<CampusEvent>;
 }
 
 export class DbStorage implements IStorage {
@@ -100,6 +109,29 @@ export class DbStorage implements IStorage {
 
   async deleteBudget(id: string): Promise<void> {
     await db.delete(budgets).where(eq(budgets.id, id));
+  }
+
+  // Campus Events methods
+  async getCampusEvents(): Promise<CampusEvent[]> {
+    return await db.select().from(campusEvents).orderBy(campusEvents.date);
+  }
+
+  async getUpcomingEvents(): Promise<CampusEvent[]> {
+    const now = new Date();
+    return await db.select()
+      .from(campusEvents)
+      .where(gte(campusEvents.date, now))
+      .orderBy(campusEvents.date);
+  }
+
+  async getCampusEvent(id: string): Promise<CampusEvent | undefined> {
+    const result = await db.select().from(campusEvents).where(eq(campusEvents.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createCampusEvent(event: InsertCampusEvent): Promise<CampusEvent> {
+    const result = await db.insert(campusEvents).values(event).returning();
+    return result[0];
   }
 }
 
