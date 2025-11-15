@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Liquid Glass Effect Variables */
+@layer base {
+  :root {
+    /* Glass surface backgrounds */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Glass with Rutgers accent */
+    --glass-accent-bg: rgba(204, 0, 51, 0.08);
+    --glass-accent-border: rgba(204, 0, 51, 0.2);
+  }
+
+  .dark {
+    /* Dark mode glass surfaces */
+    --glass-bg: rgba(0, 0, 0, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: rgba(0, 0, 0, 0.3);
+    
+    /* Dark mode glass with Rutgers accent */
+    --glass-accent-bg: rgba(204, 0, 51, 0.12);
+    --glass-accent-border: rgba(204, 0, 51, 0.25);
+  }
+}
+
 /* LIGHT MODE - Rutgers University Theme */
 :root {
   --button-outline: rgba(0,0,0, .10);
@@ -284,5 +309,41 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
+  }
+}
+
+/* Liquid Glass Effect Utility Classes */
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 var(--glass-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-accent {
+    background: linear-gradient(135deg, var(--glass-accent-bg) 0%, var(--glass-bg) 100%);
+    border: 1px solid var(--glass-accent-border);
+    box-shadow: 0 8px 32px 0 var(--glass-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 16px 0 var(--glass-shadow);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  @media (prefers-reduced-transparency) {
+    .glass, .glass-accent, .glass-card {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: hsl(var(--card));
+      border: 1px solid hsl(var(--card-border));
+    }
   }
 }

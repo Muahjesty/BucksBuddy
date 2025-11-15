@@ -20,6 +20,7 @@ export default function CampusEvents() {
   const filteredEvents = events.filter((event) => {
     const matchesSearch = 
       event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === "all" || event.category === categoryFilter;
@@ -28,19 +29,8 @@ export default function CampusEvents() {
 
   const categories = Array.from(new Set(events.map(e => e.category))).sort();
 
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      "Tech": "hsl(217, 91%, 35%)",
-      "Career": "hsl(142, 76%, 30%)",
-      "Finance": "hsl(34, 92%, 45%)",
-      "Academic": "hsl(271, 91%, 35%)",
-      "Wellness": "hsl(165, 82%, 35%)",
-      "Sports": "hsl(0, 84%, 40%)",
-      "Cultural": "hsl(280, 70%, 40%)",
-      "Social": "hsl(195, 82%, 35%)",
-      "Community": "hsl(88, 60%, 35%)",
-    };
-    return colors[category] || "hsl(0, 0%, 45%)";
+  const getCategoryVariant = (category: string): "default" | "secondary" | "outline" => {
+    return "secondary";
   };
 
   return (
@@ -110,10 +100,7 @@ export default function CampusEvents() {
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-lg">{event.name}</CardTitle>
                   <Badge 
-                    style={{ 
-                      backgroundColor: getCategoryColor(event.category),
-                      color: 'white'
-                    }}
+                    variant={getCategoryVariant(event.category)}
                     className="shrink-0"
                   >
                     {event.category}

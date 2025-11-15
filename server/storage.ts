@@ -1,6 +1,6 @@
 import { 
   type User, 
-  type InsertUser,
+  type UpsertUser,
   type Transaction,
   type InsertTransaction,
   type Budget,
@@ -17,10 +17,9 @@ import { db } from "./db";
 import { eq, desc, gte } from "drizzle-orm";
 
 export interface IStorage {
-  // User methods
+  // User methods - Required for Replit Auth
   getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  upsertUser(user: UpsertUser): Promise<User>;
   
   // Transaction methods
   getTransactions(userId: string, limit?: number): Promise<Transaction[]>;
@@ -43,19 +42,24 @@ export interface IStorage {
 }
 
 export class DbStorage implements IStorage {
-  // User methods
+  // User methods - Required for Replit Auth
   async getUser(id: string): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
     return result[0];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
-    return result[0];
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const result = await db.insert(users).values(insertUser).returning();
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const result = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
     return result[0];
   }
 

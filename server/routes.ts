@@ -2,15 +2,29 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertTransactionSchema, insertBudgetSchema, insertCampusEventSchema } from "@shared/schema";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { z } from "zod";
 
-const DEMO_USER_ID = "demo-user-001";
-
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Transaction routes
-  app.get("/api/transactions", async (req, res) => {
+  // Setup Replit Auth
+  await setupAuth(app);
+
+  // Auth route
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const transactions = await storage.getTransactions(DEMO_USER_ID);
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+  // Transaction routes - Protected
+  app.get("/api/transactions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const transactions = await storage.getTransactions(userId);
       res.json(transactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
@@ -18,11 +32,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/transactions", async (req, res) => {
+  app.post("/api/transactions", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const validatedData = insertTransactionSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID,
+        userId,
       });
       const transaction = await storage.createTransaction(validatedData);
       res.status(201).json(transaction);
@@ -36,8 +51,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/transactions/:id", async (req, res) => {
+  app.delete("/api/transactions/:id", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const { id } = req.params;
       const transaction = await storage.getTransaction(id);
       
@@ -45,7 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Transaction not found" });
       }
       
-      if (transaction.userId !== DEMO_USER_ID) {
+      if (transaction.userId !== userId) {
         return res.status(403).json({ error: "Unauthorized" });
       }
       
@@ -57,10 +73,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Budget routes
-  app.get("/api/budgets", async (req, res) => {
+  // Budget routes - Protected
+  app.get("/api/budgets", isAuthenticated, async (req: any, res) => {
     try {
-      const budgets = await storage.getBudgets(DEMO_USER_ID);
+      const userId = req.user.claims.sub;
+      const budgets = await storage.getBudgets(userId);
       res.json(budgets);
     } catch (error) {
       console.error("Error fetching budgets:", error);
@@ -68,11 +85,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/budgets", async (req, res) => {
+  app.post("/api/budgets", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const validatedData = insertBudgetSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID,
+        userId,
       });
       const budget = await storage.createBudget(validatedData);
       res.status(201).json(budget);
