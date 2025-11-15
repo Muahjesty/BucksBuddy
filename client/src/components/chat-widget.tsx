@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -20,21 +20,42 @@ interface FinancialContext {
   }>;
 }
 
-export function ChatWidget({ financialContext }: { financialContext: FinancialContext }) {
+export interface ChatWidgetRef {
+  openWithMessage: (message: string) => void;
+}
+
+interface ChatWidgetProps {
+  financialContext: FinancialContext;
+}
+
+export const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>((props, ref) => {
+  const { financialContext } = props;
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    openWithMessage: (message: string) => {
+      setIsOpen(true);
+      setIsMinimized(false);
+      setPendingMessage(message);
+    }
+  }));
 
   const BACKEND_URL = import.meta.env.VITE_CHAT_BACKEND_URL || 'https://7f5c848d-4fe1-4f88-b0e6-777bf0170334-00-3rl8p3kqh71ji.kirk.replit.dev';
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+  const sendMessage = async (messageText?: string) => {
+    const messageToSend = messageText || input;
+    if (!messageToSend.trim()) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessage: Message = { role: 'user', content: messageToSend };
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    if (!messageText) {
+      setInput('');
+    }
     setLoading(true);
 
     try {
@@ -44,7 +65,7 @@ export function ChatWidget({ financialContext }: { financialContext: FinancialCo
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: input,
+          message: messageToSend,
           financial_context: financialContext,
         }),
       });
@@ -76,6 +97,13 @@ export function ChatWidget({ financialContext }: { financialContext: FinancialCo
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (pendingMessage && isOpen) {
+      sendMessage(pendingMessage);
+      setPendingMessage(null);
+    }
+  }, [pendingMessage, isOpen]);
 
   if (!isOpen) {
     return (
@@ -181,7 +209,7 @@ export function ChatWidget({ financialContext }: { financialContext: FinancialCo
                 data-testid="input-chat-message"
               />
               <Button
-                onClick={sendMessage}
+                onClick={() => sendMessage()}
                 disabled={loading || !input.trim()}
                 size="icon"
                 data-testid="button-send-message"
@@ -194,4 +222,4 @@ export function ChatWidget({ financialContext }: { financialContext: FinancialCo
       )}
     </Card>
   );
-}
+});

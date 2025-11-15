@@ -10,8 +10,13 @@ import { useQuery } from "@tanstack/react-query";
 import type { Transaction, Budget } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChatWidgetRef } from "@/components/chat-widget";
 
-export default function Dashboard() {
+interface DashboardProps {
+  chatWidgetRef?: React.RefObject<ChatWidgetRef>;
+}
+
+export default function Dashboard({ chatWidgetRef }: DashboardProps) {
   const { data: transactions = [], isLoading: transactionsLoading } = useQuery<Transaction[]>({
     queryKey: ["/api/transactions"],
   });
@@ -97,7 +102,13 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SpendingChart data={spendingData} />
-          <AIInsights insights={insights} />
+          <AIInsights 
+            insights={insights} 
+            onLearnMore={(insight) => {
+              const message = `Can you explain how you generated this insight: "${insight.title}" - ${insight.description}`;
+              chatWidgetRef?.current?.openWithMessage(message);
+            }}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -6,8 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ChatWidget } from "@/components/chat-widget";
+import { ChatWidget, ChatWidgetRef } from "@/components/chat-widget";
 import { useAuth } from "@/hooks/useAuth";
+import { useRef } from "react";
 import Dashboard from "@/pages/dashboard";
 import Transactions from "@/pages/transactions";
 import Budgets from "@/pages/budgets";
@@ -16,7 +17,7 @@ import CampusEvents from "@/pages/campus-events";
 import Landing from "@/pages/landing";
 import NotFound from "@/pages/not-found";
 
-function Router() {
+function Router({ chatWidgetRef }: { chatWidgetRef?: React.RefObject<ChatWidgetRef> }) {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -33,7 +34,9 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/">
+        <Dashboard chatWidgetRef={chatWidgetRef} />
+      </Route>
       <Route path="/transactions" component={Transactions} />
       <Route path="/budgets" component={Budgets} />
       <Route path="/rewards" component={Rewards} />
@@ -72,6 +75,7 @@ function App() {
 
 function AuthenticatedApp({ style, financialContext }: any) {
   const { isAuthenticated, isLoading } = useAuth();
+  const chatWidgetRef = useRef<ChatWidgetRef>(null);
 
   if (isLoading || !isAuthenticated) {
     return <Router />;
@@ -87,11 +91,11 @@ function AuthenticatedApp({ style, financialContext }: any) {
             <ThemeToggle />
           </header>
           <main className="flex-1 overflow-auto">
-            <Router />
+            <Router chatWidgetRef={chatWidgetRef} />
           </main>
         </div>
       </div>
-      <ChatWidget financialContext={financialContext} />
+      <ChatWidget ref={chatWidgetRef} financialContext={financialContext} />
     </SidebarProvider>
   );
 }

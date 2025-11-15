@@ -12,6 +12,7 @@ interface Insight {
 
 interface AIInsightsProps {
   insights: Insight[];
+  onLearnMore?: (insight: Insight) => void;
 }
 
 const insightIcons = {
@@ -20,7 +21,7 @@ const insightIcons = {
   recommendation: Calendar,
 };
 
-export function AIInsights({ insights }: AIInsightsProps) {
+export function AIInsights({ insights, onLearnMore }: AIInsightsProps) {
   return (
     <Card data-testid="card-ai-insights">
       <CardHeader>
@@ -50,7 +51,13 @@ export function AIInsights({ insights }: AIInsightsProps) {
                 <div className="flex-1 space-y-2">
                   <p className="font-semibold text-sm">{insight.title}</p>
                   <p className="text-sm text-muted-foreground">{insight.description}</p>
-                  <Button variant="ghost" size="sm" className="h-8 text-xs" data-testid={`button-insight-${insight.id}`}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 text-xs" 
+                    data-testid={`button-insight-${insight.id}`}
+                    onClick={() => onLearnMore?.(insight)}
+                  >
                     Learn More
                   </Button>
                 </div>
