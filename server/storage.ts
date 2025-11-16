@@ -7,10 +7,16 @@ import {
   type InsertBudget,
   type CampusEvent,
   type InsertCampusEvent,
+  type Promotion,
+  type InsertPromotion,
+  type SavedPromotion,
+  type InsertSavedPromotion,
   users,
   transactions,
   budgets,
-  campusEvents
+  campusEvents,
+  promotions,
+  savedPromotions
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
@@ -39,6 +45,18 @@ export interface IStorage {
   getUpcomingEvents(): Promise<CampusEvent[]>;
   getCampusEvent(id: string): Promise<CampusEvent | undefined>;
   createCampusEvent(event: InsertCampusEvent): Promise<CampusEvent>;
+  
+  // Promotion methods
+  getPromotions(): Promise<Promotion[]>;
+  getActivePromotions(): Promise<Promotion[]>;
+  getPromotion(id: string): Promise<Promotion | undefined>;
+  createPromotion(promotion: InsertPromotion): Promise<Promotion>;
+  
+  // Saved Promotion methods
+  getSavedPromotions(userId: string): Promise<SavedPromotion[]>;
+  savePromotion(userId: string, promotionId: string): Promise<SavedPromotion>;
+  redeemPromotion(userId: string, promotionId: string): Promise<SavedPromotion | undefined>;
+  unsavePromotion(userId: string, promotionId: string): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -188,6 +206,70 @@ export class DbStorage implements IStorage {
   async createCampusEvent(event: InsertCampusEvent): Promise<CampusEvent> {
     const result = await db.insert(campusEvents).values(event).returning();
     return result[0];
+  }
+
+  // Promotion methods
+  async getPromotions(): Promise<Promotion[]> {
+    return await db.select().from(promotions).orderBy(promotions.expiresAt);
+  }
+
+  async getActivePromotions(): Promise<Promotion[]> {
+    const now = new Date();
+    return await db.select()
+      .from(promotions)
+      .where(gte(promotions.expiresAt, now))
+      .orderBy(promotions.expiresAt);
+  }
+
+  async getPromotion(id: string): Promise<Promotion | undefined> {
+    const result = await db.select().from(promotions).where(eq(promotions.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createPromotion(promotion: InsertPromotion): Promise<Promotion> {
+    const result = await db.insert(promotions).values(promotion).returning();
+    return result[0];
+  }
+
+  // Saved Promotion methods
+  async getSavedPromotions(userId: string): Promise<SavedPromotion[]> {
+    return await db.select()
+      .from(savedPromotions)
+      .where(eq(savedPromotions.userId, userId))
+      .orderBy(desc(savedPromotions.savedAt));
+  }
+
+  async savePromotion(userId: string, promotionId: string): Promise<SavedPromotion> {
+    const result = await db.insert(savedPromotions)
+      .values({ userId, promotionId })
+      .returning();
+    return result[0];
+  }
+
+  async redeemPromotion(userId: string, promotionId: string): Promise<SavedPromotion | undefined> {
+    const result = await db.update(savedPromotions)
+      .set({ 
+        isRedeemed: 1,
+        redeemedAt: new Date()
+      })
+      .where(
+        and(
+          eq(savedPromotions.userId, userId),
+          eq(savedPromotions.promotionId, promotionId)
+        )
+      )
+      .returning();
+    return result[0];
+  }
+
+  async unsavePromotion(userId: string, promotionId: string): Promise<void> {
+    await db.delete(savedPromotions)
+      .where(
+        and(
+          eq(savedPromotions.userId, userId),
+          eq(savedPromotions.promotionId, promotionId)
+        )
+      );
   }
 }
 

@@ -68,6 +68,29 @@ export const campusEvents = pgTable("campus_events", {
   isFree: integer("is_free").notNull().default(1),
 });
 
+export const promotions = pgTable("promotions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  restaurantName: text("restaurant_name").notNull(),
+  restaurantAddress: text("restaurant_address").notNull(),
+  cuisineType: text("cuisine_type").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  discountType: text("discount_type").notNull(),
+  discountValue: text("discount_value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  terms: text("terms"),
+  imageUrl: text("image_url"),
+});
+
+export const savedPromotions = pgTable("saved_promotions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  promotionId: varchar("promotion_id").notNull(),
+  savedAt: timestamp("saved_at").notNull().defaultNow(),
+  isRedeemed: integer("is_redeemed").notNull().default(0),
+  redeemedAt: timestamp("redeemed_at"),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertTransactionSchema = createInsertSchema(transactions).omit({ id: true }).extend({
   date: z.union([z.date(), z.string().transform((str) => new Date(str))]).optional(),
@@ -77,6 +100,10 @@ export const insertRewardSchema = createInsertSchema(rewards).omit({ id: true })
 export const insertCampusEventSchema = createInsertSchema(campusEvents).omit({ id: true }).extend({
   date: z.union([z.date(), z.string().transform((str) => new Date(str))]),
 });
+export const insertPromotionSchema = createInsertSchema(promotions).omit({ id: true }).extend({
+  expiresAt: z.union([z.date(), z.string().transform((str) => new Date(str))]),
+});
+export const insertSavedPromotionSchema = createInsertSchema(savedPromotions).omit({ id: true, savedAt: true });
 
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -89,3 +116,7 @@ export type InsertReward = z.infer<typeof insertRewardSchema>;
 export type Reward = typeof rewards.$inferSelect;
 export type InsertCampusEvent = z.infer<typeof insertCampusEventSchema>;
 export type CampusEvent = typeof campusEvents.$inferSelect;
+export type InsertPromotion = z.infer<typeof insertPromotionSchema>;
+export type Promotion = typeof promotions.$inferSelect;
+export type InsertSavedPromotion = z.infer<typeof insertSavedPromotionSchema>;
+export type SavedPromotion = typeof savedPromotions.$inferSelect;
