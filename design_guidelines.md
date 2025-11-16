@@ -1,4 +1,4 @@
-# Smart Campus Wallet - Design Guidelines
+# BucksBuddy - Design Guidelines
 
 ## Design Approach
 

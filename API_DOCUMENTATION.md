@@ -19,7 +19,7 @@ Authorization: Bearer YOUR_AI_API_KEY
 ```
 
 Replace `YOUR_AI_API_KEY` with the same secret you added to both:
-- This Smart Campus Wallet app (as `AI_API_KEY` secret)
+- This BucksBuddy app (as `AI_API_KEY` secret)
 - Your external chatbot backend (as `AI_API_KEY` secret)
 
 ## Query Parameters

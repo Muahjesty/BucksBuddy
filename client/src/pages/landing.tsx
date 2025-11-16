@@ -12,7 +12,7 @@ export default function Landing() {
               <Wallet className="h-8 w-8" />
             </div>
             <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Smart Campus Wallet
+              BucksBuddy
             </h1>
           </div>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">

@@ -34,7 +34,7 @@ export function AppSidebar() {
             <Wallet className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold">Campus Wallet</h2>
+            <h2 className="text-lg font-semibold">BucksBuddy</h2>
             <p className="text-xs text-muted-foreground">Rutgers Newark</p>
           </div>
         </div>

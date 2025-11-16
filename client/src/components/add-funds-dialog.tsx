@@ -56,7 +56,7 @@ export function AddFundsDialog({ open, onOpenChange }: AddFundsDialogProps) {
         <DialogHeader>
           <DialogTitle>Add Funds</DialogTitle>
           <DialogDescription>
-            Add money to your campus wallet balances
+            Add money to your campus account balances
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

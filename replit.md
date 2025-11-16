@@ -1,8 +1,8 @@
-# Smart Campus Wallet
+# BucksBuddy
 
 ## Overview
 
-Smart Campus Wallet is a comprehensive financial management platform designed for college students at Rutgers University-Newark. The application helps students track campus-related spending, manage multiple payment methods (meal plans, dining dollars, campus cards), set budgets, earn rewards, and gain AI-powered insights into their financial habits. Built for the HackFest 2025 hackathon, the application provides a modern, fintech-inspired interface with Rutgers branding and a clean black/white/red design theme that makes financial management approachable and engaging for students.
+BucksBuddy is a comprehensive financial management platform designed for college students at Rutgers University-Newark. The application helps students track campus-related spending, manage multiple payment methods (meal plans, dining dollars, campus cards), set budgets, earn rewards, and gain AI-powered insights into their financial habits. Built for the HackFest 2025 hackathon, the application provides a modern, fintech-inspired interface with Rutgers branding and a clean black/white/red design theme that makes financial management approachable and engaging for students.
 
 ## Recent Changes (November 16, 2025)
 
