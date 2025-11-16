@@ -98,7 +98,7 @@ export class DbStorage implements IStorage {
         const spent = await this.calculateBudgetSpent(userId, budget.category, budget.period);
         return {
           ...budget,
-          spent,
+          spent: spent.toFixed(2),
         };
       })
     );
