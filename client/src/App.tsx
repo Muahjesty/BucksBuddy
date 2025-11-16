@@ -14,6 +14,7 @@ import Transactions from "@/pages/transactions";
 import Budgets from "@/pages/budgets";
 import Rewards from "@/pages/rewards";
 import CampusEvents from "@/pages/campus-events";
+import Promotions from "@/pages/promotions";
 import Landing from "@/pages/landing";
 import NotFound from "@/pages/not-found";
 
@@ -41,6 +42,7 @@ function Router({ chatWidgetRef }: { chatWidgetRef?: React.RefObject<ChatWidgetR
       <Route path="/budgets" component={Budgets} />
       <Route path="/rewards" component={Rewards} />
       <Route path="/events" component={CampusEvents} />
+      <Route path="/promotions" component={Promotions} />
       <Route component={NotFound} />
     </Switch>
   );
