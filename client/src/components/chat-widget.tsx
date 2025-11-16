@@ -129,7 +129,7 @@ export const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>((props, ref
       <div className="flex items-center justify-between p-4 border-b bg-primary text-primary-foreground rounded-t-lg">
         <div className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
-          <span className="font-semibold">Financial Advisor</span>
+          <span className="font-semibold">Campus Assistant</span>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -160,9 +160,9 @@ export const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>((props, ref
             <div className="space-y-4">
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground py-8 space-y-2">
-                  <p className="text-sm">Ask me anything about your spending!</p>
+                  <p className="text-sm">Ask me about spending, events, budgets, or campus life!</p>
                   <p className="text-xs">
-                    e.g., "Should I add more to my meal plan?" or "How much did I spend this week?"
+                    e.g., "Where am I spending the most?" or "What events are happening this weekend?"
                   </p>
                 </div>
               )}
@@ -203,7 +203,7 @@ export const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>((props, ref
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                placeholder="Ask about your spending..."
+                placeholder="Ask me anything..."
                 disabled={loading}
                 className="flex-1"
                 data-testid="input-chat-message"
