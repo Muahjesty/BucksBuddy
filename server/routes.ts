@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTransactionSchema, insertBudgetSchema, insertCampusEventSchema } from "@shared/schema";
+import { insertTransactionSchema, insertBudgetSchema, insertCampusEventSchema, insertPromotionSchema } from "@shared/schema";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { z } from "zod";
 
@@ -201,6 +201,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching AI campus events:", error);
       res.status(500).json({ error: "Failed to fetch campus events" });
+    }
+  });
+
+  // Promotion routes - Protected
+  app.get("/api/promotions", isAuthenticated, async (req, res) => {
+    try {
+      const promotions = await storage.getActivePromotions();
+      res.json(promotions);
+    } catch (error) {
+      console.error("Error fetching promotions:", error);
+      res.status(500).json({ error: "Failed to fetch promotions" });
+    }
+  });
+
+  app.get("/api/promotions/saved", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const savedPromotions = await storage.getSavedPromotions(userId);
+      res.json(savedPromotions);
+    } catch (error) {
+      console.error("Error fetching saved promotions:", error);
+      res.status(500).json({ error: "Failed to fetch saved promotions" });
+    }
+  });
+
+  app.post("/api/promotions/:id/save", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      
+      const promotion = await storage.getPromotion(id);
+      if (!promotion) {
+        return res.status(404).json({ error: "Promotion not found" });
+      }
+      
+      const savedPromotion = await storage.savePromotion(userId, id);
+      res.status(201).json(savedPromotion);
+    } catch (error) {
+      console.error("Error saving promotion:", error);
+      res.status(500).json({ error: "Failed to save promotion" });
+    }
+  });
+
+  app.post("/api/promotions/:id/redeem", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      
+      const redeemedPromotion = await storage.redeemPromotion(userId, id);
+      if (!redeemedPromotion) {
+        return res.status(404).json({ error: "Saved promotion not found" });
+      }
+      
+      res.json(redeemedPromotion);
+    } catch (error) {
+      console.error("Error redeeming promotion:", error);
+      res.status(500).json({ error: "Failed to redeem promotion" });
+    }
+  });
+
+  app.delete("/api/promotions/:id/unsave", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      
+      await storage.unsavePromotion(userId, id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error unsaving promotion:", error);
+      res.status(500).json({ error: "Failed to unsave promotion" });
     }
   });
 
