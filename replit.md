@@ -6,6 +6,19 @@ BucksBuddy is a comprehensive financial management platform designed for college
 
 ## Recent Changes (November 16, 2025)
 
+**Branding Update:**
+- Renamed application from "Smart Campus Wallet" to "BucksBuddy"
+- Updated all references across frontend, documentation, and metadata
+- Refreshed page title, sidebar branding, and landing page
+
+**Campus Map Feature:**
+- Added interactive Campus Map page displaying Rutgers Newark campus grid map
+- Implemented zoom controls (50% to 200%) for detailed campus navigation
+- Added download functionality for offline access to campus map PDF
+- Includes information cards highlighting campus buildings, transit access, and parking locations
+- Full accessibility support with aria-labels for screen readers
+- Route: /campus-map with MapPin icon in sidebar navigation
+
 **Restaurant Promotions Feature:**
 - Added new Promotions tab for local Newark restaurant deals and coupons
 - Students can browse, save, and redeem restaurant promotions near Rutgers Newark campus
