@@ -76,7 +76,7 @@ export function TapPayDialog({ open, onOpenChange }: TapPayDialogProps) {
       if (!open) handleClose();
       else onOpenChange(open);
     }}>
-      <DialogContent className="sm:max-w-[500px] glass-card">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Smartphone className="h-5 w-5 text-primary" />
@@ -147,7 +147,7 @@ export function TapPayDialog({ open, onOpenChange }: TapPayDialogProps) {
         ) : (
           <div className="space-y-6 py-6">
             <div className="flex flex-col items-center gap-4">
-              <div className="glass-strong p-8 rounded-full">
+              <div className="bg-primary/10 p-8 rounded-full">
                 <CheckCircle2 className="h-16 w-16 text-primary" />
               </div>
 
@@ -158,7 +158,7 @@ export function TapPayDialog({ open, onOpenChange }: TapPayDialogProps) {
                 </p>
               </div>
 
-              <div className="glass-subtle p-4 rounded-xl w-full text-center space-y-2">
+              <div className="bg-muted/30 p-4 rounded-xl w-full text-center space-y-2 border">
                 <div className="flex items-center justify-center gap-2 text-sm font-semibold">
                   {getBalanceIcon()}
                   <span className="capitalize" data-testid="text-payment-source">

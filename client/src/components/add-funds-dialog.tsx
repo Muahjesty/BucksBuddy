@@ -52,7 +52,7 @@ export function AddFundsDialog({ open, onOpenChange }: AddFundsDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] glass-card" data-testid="dialog-add-funds">
+      <DialogContent className="sm:max-w-[425px]" data-testid="dialog-add-funds">
         <DialogHeader>
           <DialogTitle>Add Funds</DialogTitle>
           <DialogDescription>

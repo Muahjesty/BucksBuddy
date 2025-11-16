@@ -105,7 +105,7 @@ export function SpendMoneyDialog({ open, onOpenChange }: SpendMoneyDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] glass-card" data-testid="dialog-spend-money">
+      <DialogContent className="sm:max-w-[425px]" data-testid="dialog-spend-money">
         <DialogHeader>
           <DialogTitle>New Purchase</DialogTitle>
           <DialogDescription>
