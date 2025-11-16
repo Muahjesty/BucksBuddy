@@ -2,28 +2,27 @@
 
 ## Overview
 
-Smart Campus Wallet is a comprehensive financial management platform designed for college students at Rutgers University-Newark. The application helps students track campus-related spending, manage multiple payment methods (meal plans, dining dollars, campus cards), set budgets, earn rewards, and gain AI-powered insights into their financial habits. Built for the HackFest 2025 hackathon, the application provides a modern, fintech-inspired interface with Rutgers branding and a stunning liquid glass/glassmorphism design theme that makes financial management approachable and engaging for students.
+Smart Campus Wallet is a comprehensive financial management platform designed for college students at Rutgers University-Newark. The application helps students track campus-related spending, manage multiple payment methods (meal plans, dining dollars, campus cards), set budgets, earn rewards, and gain AI-powered insights into their financial habits. Built for the HackFest 2025 hackathon, the application provides a modern, fintech-inspired interface with Rutgers branding and a clean black/white/red design theme that makes financial management approachable and engaging for students.
 
-## Recent Changes (November 15, 2025)
+## Recent Changes (November 16, 2025)
 
-**Authentication Implementation:**
+**Clean Black/White/Red Theme Implementation:**
+- Removed all glassmorphism/liquid glass effects and converted to clean solid color design
+- Updated all CSS variables to use exact Rutgers scarlet red (#CC0033 / HSL: 345° 100% 40%)
+- Removed all glass utility classes (`.glass`, `.glass-card`, `.glass-strong`, `.glass-subtle`)
+- Updated all dialog components to use clean solid backgrounds
+- Updated sidebar and balance cards to use clean solid backgrounds
+- Verified theme works properly in both light and dark modes with proper color contrast
+- Primary color now consistently uses Rutgers scarlet throughout the application
+
+**Previous Changes (November 15, 2025):**
 - Integrated Replit Auth (OpenID Connect) supporting email/password, Google, GitHub, X, and Apple logins
 - Added PostgreSQL-backed session management for persistent authentication
 - Implemented automatic token refresh flow with proper session persistence
 - Created Landing page for logged-out users showcasing app features
 - All API routes now protected with authentication middleware
-
-**Database Schema Updates:**
-- Migrated users table from username/password to OIDC-based fields (email, firstName, lastName, profileImageUrl)
+- Migrated users table from username/password to OIDC-based fields
 - Added sessions table for persistent session storage
-- Implemented user upsert flow from OIDC claims to database
-
-**Glassmorphism Design Theme:**
-- Added liquid glass CSS variables supporting light and dark modes
-- Created utility classes: `.glass`, `.glass-accent`, `.glass-card`
-- Applied glass effects to sidebar (backdrop blur, translucent background)
-- Applied glass-accent gradient to header with Rutgers scarlet tones
-- Applied glass-card effect to balance cards for subtle depth
 
 ## User Preferences
 
@@ -46,19 +45,21 @@ Preferred communication style: Simple, everyday language.
 - **Recharts** - Composable charting library for data visualizations (spending breakdowns, budget progress)
 
 **Design System:**
-- **Liquid Glass/Glassmorphism Theme** - Translucent surfaces with backdrop blur effects
-- Rutgers scarlet red (#CC0033 / HSL: 345° 100% 40%) as primary brand color with glass accent gradients
-- Custom theme system supporting light/dark modes with adaptive glass variables
+- **Clean Black/White/Red Theme** - Solid colors with clean, modern appearance
+- Rutgers scarlet red (#CC0033 / HSL: 345° 100% 40%) as primary brand color throughout
+- Custom theme system supporting light/dark modes with proper contrast
 - Typography using Inter font family for readability of financial data
 - Monospace fonts (Roboto Mono) for monetary values to ensure alignment
-- **Glass CSS Variables:**
-  - `--glass-bg` - Translucent white (light) / black (dark) with 0.7/0.4 alpha
-  - `--glass-border` - Subtle border for glass surfaces
-  - `--glass-accent-bg` - Rutgers scarlet with 8-12% opacity
-- **Glass Utility Classes:**
-  - `.glass` - Main glass effect (12px backdrop blur, translucent bg)
-  - `.glass-accent` - Glass with Rutgers scarlet gradient
-  - `.glass-card` - Lighter glass effect for cards (8px backdrop blur)
+- **Light Mode Colors:**
+  - Background: Pure white (HSL: 0° 0% 100%)
+  - Cards: White with subtle borders
+  - Primary: Rutgers scarlet (HSL: 345° 100% 40%)
+  - Sidebar: Light gray (HSL: 0° 0% 98%)
+- **Dark Mode Colors:**
+  - Background: Dark gray (HSL: 0° 0% 3.9%)
+  - Cards: Dark with subtle borders
+  - Primary: Brighter Rutgers scarlet (HSL: 345° 100% 50%)
+  - Sidebar: Dark (HSL: 0° 0% 10%)
 
 ### Backend Architecture
 
