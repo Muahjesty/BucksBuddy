@@ -15,6 +15,15 @@ Smart Campus Wallet is a comprehensive financial management platform designed fo
 - Receives personalized responses for financial and campus-related questions
 - Successfully tested with diverse query types (spending analysis and event discovery)
 
+**AI Campus Events API Integration:**
+- Created secure API endpoint `/api/ai/campus-events` for external chatbot backend
+- Protected with `AI_API_KEY` Bearer token authentication
+- Allows AI to fetch real-time campus event data (limit and date range filtering)
+- Query parameters: `limit` (default 10) and `days_ahead` (default 30)
+- Returns upcoming events with details: name, category, date, location, description, organizer, isFree
+- Comprehensive API documentation provided in `API_DOCUMENTATION.md`
+- Successfully tested authentication and data retrieval
+
 **Clean Black/White/Red Theme Implementation:**
 - Removed all glassmorphism/liquid glass effects and converted to clean solid color design
 - Updated all CSS variables to use exact Rutgers scarlet red (#CC0033 / HSL: 345° 100% 40%)
