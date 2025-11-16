@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Home, CreditCard, Target, Award, Wallet, User, Calendar, Tag } from "lucide-react";
+import { Home, CreditCard, Target, Award, Wallet, User, Calendar, Tag, MapPin } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -21,6 +21,7 @@ const menuItems = [
   { title: "Rewards", url: "/rewards", icon: Award },
   { title: "Events", url: "/events", icon: Calendar },
   { title: "Promotions", url: "/promotions", icon: Tag },
+  { title: "Campus Map", url: "/campus-map", icon: MapPin },
 ];
 
 export function AppSidebar() {
