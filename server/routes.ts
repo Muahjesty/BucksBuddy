@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertTransactionSchema, insertBudgetSchema, insertCampusEventSchema } from "@shared/schema";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { z } from "zod";
+import OpenAI from "openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Replit Auth
@@ -136,6 +137,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         console.error("Error creating campus event:", error);
         res.status(500).json({ error: "Failed to create campus event" });
+      }
+    }
+  });
+
+  // AI Chat endpoint - Protected
+  app.post("/api/chat", isAuthenticated, async (req: any, res) => {
+    try {
+      const { message, financial_context } = req.body;
+      
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: "OpenAI API key not configured" });
+      }
+
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const systemPrompt = `You are a friendly financial advisor for college students at Rutgers University-Newark. You help students manage their campus wallet, including meal plans, dining dollars, and campus card balances. 
+
+Current student financial context:
+- Meal Plan Balance: $${financial_context?.meal_plan_balance || 0}
+- Dining Dollars: $${financial_context?.dining_dollars || 0}
+- Campus Card Balance: $${financial_context?.campus_card_balance || 0}
+
+Provide helpful, concise advice about budgeting, spending habits, and financial decisions. Keep responses friendly and under 3 sentences unless more detail is specifically requested.`;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7,
+        max_tokens: 200,
+      });
+
+      const aiResponse = completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+      
+      res.json({ response: aiResponse });
+    } catch (error: any) {
+      console.error("Error in chat endpoint:", error);
+      if (error.status === 401) {
+        res.status(500).json({ error: "OpenAI API authentication failed" });
+      } else {
+        res.status(500).json({ error: "Failed to generate response" });
       }
     }
   });

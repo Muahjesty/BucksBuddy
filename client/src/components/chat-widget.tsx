@@ -45,8 +45,6 @@ export const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>((props, ref
     }
   }));
 
-  const BACKEND_URL = import.meta.env.VITE_CHAT_BACKEND_URL || 'https://7f5c848d-4fe1-4f88-b0e6-777bf0170334-00-3rl8p3kqh71ji.kirk.replit.dev';
-
   const sendMessage = async (messageText?: string) => {
     const messageToSend = messageText || input;
     if (!messageToSend.trim()) return;
@@ -59,7 +57,7 @@ export const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>((props, ref
     setLoading(true);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/financial-chat`, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
