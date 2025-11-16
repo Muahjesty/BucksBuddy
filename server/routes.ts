@@ -140,6 +140,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI-only endpoint for external chatbot backend to fetch campus events
+  // Secured with AI_API_KEY environment variable
+  app.get("/api/ai/campus-events", async (req, res) => {
+    try {
+      // Check for AI_API_KEY in Authorization header
+      const authHeader = req.headers.authorization;
+      const expectedKey = process.env.AI_API_KEY;
+      
+      if (!expectedKey) {
+        console.error("AI_API_KEY not configured");
+        return res.status(500).json({ error: "Server configuration error" });
+      }
+      
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Missing or invalid authorization header" });
+      }
+      
+      const providedKey = authHeader.substring(7); // Remove "Bearer " prefix
+      if (providedKey !== expectedKey) {
+        return res.status(401).json({ error: "Invalid API key" });
+      }
+      
+      // Parse query parameters
+      const limit = parseInt(req.query.limit as string) || 10;
+      const daysAhead = parseInt(req.query.days_ahead as string) || 30;
+      
+      // Get upcoming events
+      const allUpcomingEvents = await storage.getUpcomingEvents();
+      
+      // Filter by days_ahead
+      const now = new Date();
+      const maxDate = new Date(now);
+      maxDate.setDate(maxDate.getDate() + daysAhead);
+      
+      const filteredEvents = allUpcomingEvents
+        .filter(event => new Date(event.date) <= maxDate)
+        .slice(0, limit);
+      
+      // Return events with cleaned up data
+      const eventsForAI = filteredEvents.map(event => ({
+        id: event.id,
+        name: event.name,
+        category: event.category,
+        date: event.date,
+        location: event.location,
+        description: event.description,
+        organizer: event.organizer,
+        isFree: event.isFree === 1,
+      }));
+      
+      res.json({
+        events: eventsForAI,
+        count: eventsForAI.length,
+        query: {
+          limit,
+          days_ahead: daysAhead,
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching AI campus events:", error);
+      res.status(500).json({ error: "Failed to fetch campus events" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
