@@ -17,7 +17,7 @@
   --card-foreground: 0 0% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 3.9%;
-  --primary: 350 89% 40%;
+  --primary: 345 100% 40%;
   --primary-foreground: 0 0% 98%;
   --secondary: 0 0% 96.1%;
   --secondary-foreground: 0 0% 9%;
@@ -29,25 +29,25 @@
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 89.8%;
   --input: 0 0% 89.8%;
-  --ring: 350 89% 40%;
-  --chart-1: 350 89% 40%;
+  --ring: 345 100% 40%;
+  --chart-1: 345 100% 40%;
   --chart-2: 20 14.3% 4.1%;
   --chart-3: 0 0% 63%;
   --chart-4: 0 0% 76.9%;
-  --chart-5: 350 60% 70%;
+  --chart-5: 345 100% 70%;
   --radius: 0.5rem;
   
   /* Navbar/Sidebar colors */
-  --navbar: 350 89% 40%;
+  --navbar: 345 100% 40%;
   --navbar-foreground: 0 0% 98%;
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 0 0% 3.9%;
-  --sidebar-primary: 350 89% 40%;
+  --sidebar-primary: 345 100% 40%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 0 0% 96.1%;
   --sidebar-accent-foreground: 0 0% 9%;
   --sidebar-border: 0 0% 89.8%;
-  --sidebar-ring: 350 89% 40%;
+  --sidebar-ring: 345 100% 40%;
 
   /* Fallback for older browsers */
   --sidebar-primary-border: hsl(var(--sidebar-primary));
@@ -93,7 +93,7 @@
   --card-foreground: 0 0% 98%;
   --popover: 0 0% 3.9%;
   --popover-foreground: 0 0% 98%;
-  --primary: 350 89% 50%;
+  --primary: 345 100% 50%;
   --primary-foreground: 0 0% 98%;
   --secondary: 0 0% 14.9%;
   --secondary-foreground: 0 0% 98%;
@@ -105,24 +105,24 @@
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 14.9%;
   --input: 0 0% 14.9%;
-  --ring: 350 89% 50%;
-  --chart-1: 350 89% 50%;
+  --ring: 345 100% 50%;
+  --chart-1: 345 100% 50%;
   --chart-2: 160 60% 45%;
   --chart-3: 30 80% 55%;
   --chart-4: 280 65% 60%;
-  --chart-5: 340 75% 55%;
+  --chart-5: 345 100% 70%;
   
   /* Navbar/Sidebar colors - dark mode */
-  --navbar: 350 89% 40%;
+  --navbar: 345 100% 40%;
   --navbar-foreground: 0 0% 98%;
   --sidebar: 0 0% 10%;
   --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 350 89% 50%;
+  --sidebar-primary: 345 100% 50%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 0 0% 14.9%;
   --sidebar-accent-foreground: 0 0% 98%;
   --sidebar-border: 0 0% 14.9%;
-  --sidebar-ring: 350 89% 50%;
+  --sidebar-ring: 345 100% 50%;
 
   /* Fallback for older browsers */
   --sidebar-primary-border: hsl(var(--sidebar-primary));
