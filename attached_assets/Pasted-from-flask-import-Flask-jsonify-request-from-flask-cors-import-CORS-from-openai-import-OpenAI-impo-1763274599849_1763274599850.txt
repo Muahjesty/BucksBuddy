@@ -1,0 +1,200 @@
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from openai import OpenAI
+import os
+
+
+app = Flask(__name__)
+CORS(app)
+
+client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+
+client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+
+# ADD THIS ENTIRE FUNCTION HERE
+def get_campus_events(limit=10, days_ahead=30):
+    """Fetch upcoming campus events from the Smart Campus Wallet API"""
+    try:
+        api_key = os.environ.get("AI_API_KEY")
+        if not api_key:
+            print("AI_API_KEY not found")
+            return []
+
+        # REPLACE WITH YOUR SMART CAMPUS WALLET APP URL
+        campus_wallet_url = "https://YOUR-APP-URL-HERE.replit.dev"
+
+        response = requests.get(
+            f"{campus_wallet_url}/api/ai/campus-events",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            params={
+                "limit": limit,
+                "days_ahead": days_ahead
+            },
+            timeout=5
+        )
+
+        if response.status_code == 200:
+            return response.json()["events"]
+        else:
+            print(f"Error fetching events: {response.status_code}")
+            return []
+    except Exception as e:
+        print(f"Error fetching campus events: {e}")
+        return []
+
+@app.route('/')
+def home():
+    # rest of your code...
+
+@app.route('/')
+def home():
+    return jsonify({
+        "status": "running",
+        "message": "OpenAI Chat API is ready. Use POST /chat to interact."
+    })
+
+@app.route('/health')
+def health():
+    return jsonify({"status": "healthy"}), 200
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    try:
+        if not os.environ.get('OPENAI_API_KEY'):
+            return jsonify({
+                "error": "OPENAI_API_KEY not set",
+                "instructions": "Please add OPENAI_API_KEY as a secret in the Secrets Tool"
+            }), 500
+        
+        data = request.get_json() or {}
+        messages = data.get('messages', [{
+            "role": "system",
+            "content": "You are a helpful assistant."
+        }, {
+            "role": "user",
+            "content": "Who won the world series in 2020?"
+        }, {
+            "role": "assistant",
+            "content": "The Los Angeles Dodgers won the World Series in 2020."
+        }, {
+            "role": "user",
+            "content": "Where was it played?"
+        }])
+        
+        model = data.get('model', 'gpt-3.5-turbo')
+        
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages
+        )
+        
+        result = {
+            "response": response.choices[0].message.content,
+            "model": response.model
+        }
+        
+        if response.usage:
+            result["usage"] = {
+                "prompt_tokens": response.usage.prompt_tokens,
+                "completion_tokens": response.usage.completion_tokens,
+                "total_tokens": response.usage.total_tokens
+            }
+        
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/financial-chat', methods=['POST'])
+def financial_chat():
+    try:
+        if not os.environ.get('OPENAI_API_KEY'):
+            return jsonify({
+                "error": "OPENAI_API_KEY not set",
+                "instructions": "Please add OPENAI_API_KEY as a secret in the Secrets Tool"
+            }), 500
+        
+        data = request.get_json() or {}
+        user_message = data.get('message', '')
+        
+        financial_context = data.get('financial_context', {})
+        meal_plan_balance = financial_context.get('meal_plan_balance', 0)
+        dining_dollars = financial_context.get('dining_dollars', 0)
+        campus_card_balance = financial_context.get('campus_card_balance', 0)
+        recent_spending = financial_context.get('recent_spending', [])
+        
+        meals_remaining = financial_context.get('meals_remaining')
+        expiration_date = financial_context.get('expiration_date')
+        
+        context_summary = f"""
+Current Financial Status:
+- Meal Plan Balance: ${meal_plan_balance:.2f}"""
+        
+        if meals_remaining is not None:
+            context_summary += f" ({meals_remaining} meals remaining)"
+        
+        context_summary += f"\n- Dining Dollars: ${dining_dollars:.2f}"
+        
+        if expiration_date:
+            context_summary += f" (Expires {expiration_date})"
+        
+        context_summary += f"\n- Campus Card Balance: ${campus_card_balance:.2f}\n"
+        
+        if recent_spending:
+            context_summary += "\nRecent Spending:\n"
+            for item in recent_spending[:5]:
+                context_summary += f"- {item.get('description', 'Purchase')}: ${item.get('amount', 0):.2f}\n"
+        
+        system_prompt = f"""You are a helpful AI assistant for Rutgers University students using the Campus Wallet app. 
+You help students make smarter decisions about their campus life, finances, and opportunities.
+
+You can help with:
+- Summarizing spending patterns and identifying where money goes
+- Suggesting smarter financial decisions and budget tips
+- Recommending campus events, dining spots, and activities
+- Answering questions about balances, budgets, and meal plans
+- Providing tips for campus opportunities (jobs, clubs, resources)
+- General advice about student life at Rutgers
+
+Give practical, friendly, and encouraging advice. Keep responses concise (2-3 sentences). 
+Use a supportive tone and be helpful without being pushy.
+
+{context_summary}"""
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message}
+        ]
+        
+        model = data.get('model', 'gpt-3.5-turbo')
+        
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=150
+        )
+        
+        result = {
+            "response": response.choices[0].message.content,
+            "model": response.model
+        }
+        
+        if response.usage:
+            result["usage"] = {
+                "prompt_tokens": response.usage.prompt_tokens,
+                "completion_tokens": response.usage.completion_tokens,
+                "total_tokens": response.usage.total_tokens
+            }
+        
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port, debug=False)
