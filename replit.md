@@ -6,13 +6,14 @@ Smart Campus Wallet is a comprehensive financial management platform designed fo
 
 ## Recent Changes (November 16, 2025)
 
-**AI Chatbot Integration:**
+**Campus Assistant Chatbot:**
 - Connected chat widget to external chatbot backend API
 - Backend URL: `https://7f5c848d-4fe1-4f88-b0e6-777bf0170334-00-3rl8p3kqh71ji.kirk.replit.dev/financial-chat`
+- Rebranded from "Financial Advisor" to "Campus Assistant" with broader capabilities
+- Handles questions about spending, campus events, budgets, and campus life
 - Chat widget sends financial context (balances) to external AI service
-- Receives personalized financial advice responses
-- Removed local OpenAI integration attempt (not needed with external backend)
-- Successfully tested end-to-end chat functionality
+- Receives personalized responses for financial and campus-related questions
+- Successfully tested with diverse query types (spending analysis and event discovery)
 
 **Clean Black/White/Red Theme Implementation:**
 - Removed all glassmorphism/liquid glass effects and converted to clean solid color design
