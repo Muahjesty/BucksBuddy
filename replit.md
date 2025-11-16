@@ -6,6 +6,15 @@ Smart Campus Wallet is a comprehensive financial management platform designed fo
 
 ## Recent Changes (November 16, 2025)
 
+**Restaurant Promotions Feature:**
+- Added new Promotions tab for local Newark restaurant deals and coupons
+- Students can browse, save, and redeem restaurant promotions near Rutgers Newark campus
+- Database schema includes `promotions` and `saved_promotions` tables
+- API endpoints: GET /api/promotions, GET /api/promotions/saved, POST /api/promotions/:id/save, POST /api/promotions/:id/redeem, DELETE /api/promotions/:id/unsave
+- Populated with 12 authentic Newark restaurants (Ferry Street BBQ, Seabra Foods, Casa Vasca, Taqueria Downtown, Tops Diner, Nasto's Ice Cream, Hobby's Delicatessen, Sabor Unido, La Fusta, Pizza Town USA, Burger Walla, Fernandes Steak House)
+- UI features: tabbed interface (All/Saved), promotion cards with expiration badges, save/redeem buttons, responsive grid layout
+- Note: Tables created manually via SQL due to npm run db:push requiring user input for users table constraint
+
 **Campus Assistant Chatbot:**
 - Connected chat widget to external chatbot backend API
 - Backend URL: `https://7f5c848d-4fe1-4f88-b0e6-777bf0170334-00-3rl8p3kqh71ji.kirk.replit.dev/financial-chat`
